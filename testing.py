@@ -2,8 +2,6 @@ import requests
 from bs4 import BeautifulSoup
 import os
 import subprocess
-import io
-import os
 import stem.process
 import re
 
@@ -42,18 +40,24 @@ for dt in content.findAll("span"):
 print(final_list)
 
 # %%
-port = 9050
-byte_path = subprocess.run(["where", "tor"], stdout=subprocess.PIPE)
-tor_path = byte_path.stdout.decode("utf-8").strip()
-tor_process = stem.process.launch_tor_with_config(
-    config={
-        "SocksPort": str(port),
-    },
-    init_msg_handler=lambda line: print(line)
-    if re.search("Bootstrapped", line)
-    else False,
-    tor_cmd=tor_path,
-)
+# Test whether the user is using Windows
+if os.name == "nt":
+    # Set-up requests through TOR
+    port = 9050
+    byte_path = subprocess.run(["where", "tor"], stdout=subprocess.PIPE)
+    tor_path = byte_path.stdout.decode("utf-8").strip()
+    tor_process = stem.process.launch_tor_with_config(
+        config={
+            "SocksPort": str(port),
+        },
+        init_msg_handler=lambda line: print(line)
+        if re.search("Bootstrapped", line)
+        else False,
+        tor_cmd=tor_path,
+    )
+else:
+    print("Sorry, Windows 10/11 is needed to route requests through TOR.")
+    exit()
 
 # %%
 # Test out whether Tor works
