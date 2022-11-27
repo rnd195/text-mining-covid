@@ -1,21 +1,22 @@
+import datetime
 from bs4 import BeautifulSoup
-import tmc_utils.tor_initialization as ti
 import requests
 import pandas as pd
-import datetime
+import tmc_utils.tor_initialization as ti
 
 
 # %%
 # Test whether TOR works
 ti.initiate_tor()
 tor_request = ti.get_tor_session()
-print("Tor IP:", tor_request.get("http://httpbin.org/ip").text)
-print("Actual IP:", requests.get("http://httpbin.org/ip").text)
+print("Tor IP:", tor_request.get("http://httpbin.org/ip", timeout=30).text)
+print("Actual IP:", requests.get("http://httpbin.org/ip", timeout=30).text)
 
 # %%
 # Dummy request
 req = tor_request.get(
-    "https://www.idnes.cz/zpravy/zahranicni/koronavirus.K466979/200"
+    "https://www.idnes.cz/zpravy/zahranicni/koronavirus.K466979/200",
+    timeout=30
 )
 
 # %%
