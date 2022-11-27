@@ -1,6 +1,8 @@
 from bs4 import BeautifulSoup
 import tmc_utils.tor_initialization as ti
 import requests
+import pandas as pd
+import datetime
 
 
 # %%
@@ -21,16 +23,47 @@ req = tor_request.get(
 soup = BeautifulSoup(req.text, "html.parser")
 content = soup.find("div", {"id": "list-art-count"})
 
-final_list = []
+# Initialize empty dictionary
+article_dict = {
+    "link": [],
+    "date": [],
+    "time": [],
+    "title": [],
+    "perex": [],
+    "premium": []
+}
 
-# Find dates, strip-off whitespaces and other unwanted content
-for dt in content.findAll("span"):
-    if dt.has_attr("datetime"):
-        date_time = dt["datetime"]
-        # Only the first 10 chars needed for date
-        date = date_time[:10]
-        final_list.append(date)
+# Find and append links, dates, time, titles, perex, and premium access
+for item in content.findAll("div", {"class": "art"}):
+    link = item.find("a", {"class": "art-link"}, href=True)["href"]
+    article_dict["link"].append(link)
 
-print(final_list)
+    date_and_time = pd.to_datetime(
+        item.find("span", {"class": "time"})["datetime"]
+    )
+    article_dict["date"].append(date_and_time.date())
+    # Articles with no specific time have 00:00:00 as the time of publication
+    if date_and_time.time() == datetime.time(0, 0):
+        article_dict["time"].append(pd.NA)
+    else:
+        article_dict["time"].append(date_and_time.time())
 
+    title = item.find("a", {"class": "art-link"}).find("h3").text.strip()
+    article_dict["title"].append(title)
+
+    # 'perex' is the lead paragraph of each article displayed in the preview
+    perex = item.find("p", {"class": "perex"})
+    # It also gives us the ability to find whether it is a premium article
+    if perex.find("a", {"class": "premlab"}) is None:
+        article_dict["perex"].append(perex.text.strip())
+        article_dict["premium"].append(False)
+    else:
+        # The word "Premium" is skipped
+        article_dict["perex"].append(perex.text[len("Premium") + 1:].strip())
+        article_dict["premium"].append(True)
+
+# Do not persist at this point. Persist cleaned text (stemmed etc.) later
+article_df = pd.DataFrame(article_dict)
+
+# %%
 ti.kill_tor_process()
