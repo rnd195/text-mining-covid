@@ -1,12 +1,6 @@
-Routing through TOR (Windows):
+## Installing TOR
 
-https://ohyicong.medium.com/how-to-create-tor-proxy-with-python-cheat-sheet-101-3d2d619a1d39
-
-https://stackoverflow.com/a/33875657
-
-
-
-A convenient way of installing TOR on your Windows personal computer:
+A convenient way of installing TOR on your <u>Windows</u> personal computer:
 
 - Install Chocolatey Package Manager https://chocolatey.org/install#individual
 
@@ -18,10 +12,22 @@ A convenient way of installing TOR on your Windows personal computer:
 ## TODO
 
 - Provide an option to not route through TOR
-  - `Make anonymous requests through TOR? ([y]es  / [n]o): `
+  - `Make anonymous requests through TOR? ([y]es / [n]o): `
 
 - ~~Windows machine needed (default to no TOR for other platforms)~~
 
 - Stem titles and perexes
 
 - Inspect and process individual articles
+
+- Create a well-structured README
+
+
+
+## Sources
+
+Routing through TOR (Windows):
+
+- https://ohyicong.medium.com/how-to-create-tor-proxy-with-python-cheat-sheet-101-3d2d619a1d39
+
+- https://stackoverflow.com/a/33875657
