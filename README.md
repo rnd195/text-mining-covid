@@ -8,7 +8,7 @@ https://stackoverflow.com/a/33875657
 
 A convenient way of installing TOR on your Windows personal computer:
 
-- Install Chocolatey package manager https://chocolatey.org/install#individual
+- Install Chocolatey Package Manager https://chocolatey.org/install#individual
 
 - Open `cmd.exe` with admin privileges
 - Run `choco install tor -y` 
@@ -21,3 +21,7 @@ A convenient way of installing TOR on your Windows personal computer:
   - `Make anonymous requests through TOR? ([y]es  / [n]o): `
 
 - ~~Windows machine needed (default to no TOR for other platforms)~~
+
+- Stem titles and perexes
+
+- Inspect and process individual articles
