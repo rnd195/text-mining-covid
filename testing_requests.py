@@ -14,7 +14,7 @@ print("Actual IP:", requests.get("http://httpbin.org/ip", timeout=30).text)
 # %%
 # Dummy request
 req = tor_request.get(
-    "https://www.idnes.cz/zpravy/zahranicni/koronavirus.K466979/203",
+    "https://www.idnes.cz/zpravy/zahranicni/koronavirus.K466979/182",
     timeout=30
 )
 
@@ -24,6 +24,7 @@ soup = BeautifulSoup(req.text, "html.parser")
 
 # Do not persist at this point. Persist cleaned text (stemmed etc.) later
 article_df = article_props.generate_article_df(soup)
+
 
 # %%
 ti.kill_tor_process()

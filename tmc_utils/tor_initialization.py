@@ -48,7 +48,8 @@ def initiate_tor():
         if len(tor_path) == 0:
             print(
                 "The TOR executable could not be found.",
-                "Please, check if tor.exe is installed or added in PATH.")
+                "Please, check if tor.exe is installed or added in PATH.",
+            )
             raise SystemExit
         # Start TOR process
         port = 9050

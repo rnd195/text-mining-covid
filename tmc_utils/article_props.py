@@ -1,7 +1,8 @@
 """Generate a dataframe with article properties.
 
-Produces a dataframe with article details such as title, date, or link.
-Note that it is tailored to a specific HTML structure of idnes.cz.
+Produces a dataframe with article details such as title, date, or link. Any
+meaningful text is pre-processed using the `clean_text` module. Note that it
+is tailored to a specific HTML structure of idnes.cz.
 
 The module contains the following function:
 
@@ -9,8 +10,8 @@ The module contains the following function:
 """
 
 import pandas as pd
-from random import shuffle
 import datetime
+from tmc_utils.clean_text import sentence_cleaner_cz
 
 
 def generate_article_df(soup_object):
@@ -31,7 +32,7 @@ def generate_article_df(soup_object):
         "title": [],
         "perex": [],
         "premium": [],
-        "video": []
+        "video": [],
     }
 
     # Find and append links, dates, time, titles, perex, and premium access
@@ -49,9 +50,8 @@ def generate_article_df(soup_object):
         else:
             article_dict["time"].append(date_and_time.time())
 
-        title = item.find("a", {"class": "art-link"}).find("h3").text.strip()
-        title_list = title.split()
-        shuffle(title_list)
+        title = item.find("a", {"class": "art-link"}).find("h3").text
+        title_list = sentence_cleaner_cz(title)
         article_dict["title"].append(title_list)
 
         # 'perex' is the lead paragraph of each article (shortened here)
@@ -62,14 +62,12 @@ def generate_article_df(soup_object):
             article_dict["premium"].append(False)
         # It also gives us the ability to find whether it is a premium article
         elif perex.find("a", {"class": "premlab"}) is None:
-            perex_list = perex.text.strip().split()
-            shuffle(perex_list)
+            perex_list = sentence_cleaner_cz(perex.text)
             article_dict["perex"].append(perex_list)
             article_dict["premium"].append(False)
         else:
             # The word "Premium" is skipped
-            perex_list = perex.text[len("Premium") + 1:].strip().split()
-            shuffle(perex_list)
+            perex_list = sentence_cleaner_cz(perex.text[len("Premium") + 1:])
             article_dict["perex"].append(perex_list)
             article_dict["premium"].append(True)
         # Some articles are purely video-based
