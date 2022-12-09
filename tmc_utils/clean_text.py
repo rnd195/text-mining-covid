@@ -3,7 +3,7 @@
 This module cleans Czech text following these steps: remove numbers, convert to
 lowercase (except for names), remove punctuation, remove double spaces, remove
 stopwords, tokenize, stem after lemmatization, and filter out 1 letter words.
-Note that, people usually choose either stemming or lemmatization in text
+Note that people usually choose either stemming or lemmatization in text
 mining analyses. However, while the lemmatization tool that we use works very
 well, on its own, it doesn't seem to recognize words such as "koronavirus,"
 which is of paramount importance to our analysis. Thus, we unconventionally
@@ -47,7 +47,7 @@ def sentence_cleaner_cz(text_string: str):
         [word for word in text_nodbl.split() if word not in stop_words]
     )
 
-    # Tokenize words and sort alphabetically to break up meaning
+    # Tokenize words and sort alphabetically to break up any meaning
     token_words = sorted(nltk.tokenize.word_tokenize(text_cleaned))
 
     # Use both lemmatization and stemming, see module description

@@ -11,16 +11,18 @@ A convenient way of installing TOR on your <u>Windows</u> personal computer:
 
 ## TODO
 
-- Provide an option to not route through TOR
-  - `Make anonymous requests through TOR? ([y]es / [n]o): `
+- [ ] Provide an option to not route through TOR
+  - [ ] `Make anonymous requests through TOR? ([y]es / [n]o): `
 
-- ~~Windows machine needed (default to no TOR for other platforms)~~
+- [x] Windows machine needed (default to no TOR for other platforms)
 
-- Stem titles and perexes
+- [ ] Stem titles and perexes
+	- [x] Create workflow
+	- [ ] Apply to all 
 
-- Inspect and process individual articles
+- [ ]  Inspect and process individual articles
 
-- Create a well-structured README
+- [ ]  Create a well-structured README
 
 
 

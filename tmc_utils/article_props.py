@@ -78,3 +78,5 @@ def generate_article_df(soup_object):
             article_dict["video"].append(False)
 
     return pd.DataFrame(article_dict)
+
+
