@@ -24,8 +24,32 @@ from tmc_utils.clean_text import sentence_cleaner_cz
 from bs4 import BeautifulSoup
 
 
-def soup_object_tor(link, tor_request_obj):
-    """"Send a request through TOR and parse it using BeautifulSoup"""
+def soup_object_tor(link, tor_request_obj=None, skip_consent=False):
+    """"Send a request through TOR and parse it using BeautifulSoup
+
+    Args:
+        link (str): Webpage URL
+        tor_request_obj (requests.sessions.Session): TOR requests object
+        skip_consent (bool): Whether or not to skip the prompt to
+
+    Returns:
+        bs4.BeautifulSoup: Parsed HTML document using BeautifulSoup
+    """
+
+    # Give option to not route through TOR
+    if tor_request_obj is None:
+        print("TOR requests object hasn't been passed.")
+        if not skip_consent:
+            consent = input("Make requests without TOR? ([y]es / [n]o): ").upper()
+            while consent not in ("Y", "N"):
+                print("Invalid input. Try again.")
+                consent = input("Make requests WITHOUT TOR? ([y]es / [n]o): ").upper()
+            # If the user still wants to use TOR, exit this script
+            if consent == "N":
+                print("Pass a TOR requests object.")
+                raise SystemExit
+            req = requests.get(link, timeout=30)
+            return BeautifulSoup(req.text, "html.parser")
 
     req = tor_request_obj.get(
         link,
@@ -34,8 +58,17 @@ def soup_object_tor(link, tor_request_obj):
     return BeautifulSoup(req.text, "html.parser")
 
 
-def soup_object_request_all(link, tor_request_obj=None):
-    """Request Archive.org before using TOR or Google Webcache and return a BeautifulSoup object"""
+def soup_object_request_all(link, tor_request_obj=None, skip_consent=False):
+    """Request Archive.org before using TOR or Google Webcache and return a BeautifulSoup object
+
+    Args:
+        link (str): Webpage URL
+        tor_request_obj (requests.sessions.Session): TOR requests object
+        skip_consent (bool): Whether or not to skip the prompt to
+
+    Returns:
+        bs4.BeautifulSoup: Parsed HTML document using BeautifulSoup
+    """
 
     archive_link = "http://archive.org/wayback/available?url=" + link
     archive_json = requests.get(archive_link, timeout=30).json()
@@ -53,7 +86,7 @@ def soup_object_request_all(link, tor_request_obj=None):
             f"URL: {link}",
             "could not be found on Archive.org, trying TOR."
         )
-        return soup_object_tor(link, tor_request_obj)
+        return soup_object_tor(link, tor_request_obj, skip_consent)
 
     # And finally try Google Webcache - not yet tested whether this works as intended
     print(
@@ -69,7 +102,6 @@ def soup_object_request_all(link, tor_request_obj=None):
         print("The website hasn't been cached or something else went wrong. Outputting None.")
         return None
     return BeautifulSoup(req.text, "html.parser")
-
 
 
 def generate_article_df(soup_object):
@@ -170,12 +202,12 @@ def add_content(article_df, tor_requests_obj, sleeping=(5, 10)):
             f"Estimated time left: {sleeping[1] * (len(article_df.link) - j)}s"
         )
 
-        # Skip for premium, gallery, and video articles
         if article_df.premium[j] or article_df.gallery[j] or article_df.video[j]:
             in_article_dict["perex_full"].append(pd.NA)
             in_article_dict["word_counter"].append(pd.NA)
             in_article_dict["authors_hash"].append(pd.NA)
             in_article_dict["topics"].append(pd.NA)
+            print("Premium, gallery, or video article detected. Skipping.")
             continue
 
         # Request and parse
