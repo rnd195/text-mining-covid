@@ -5,6 +5,7 @@ Note that `tor.exe` needs to be installed and added in the user's PATH.
 
 The module contains the following functions:
 
+- `tor_available()` - Checks if TOR is installed
 - `get_tor_session()` - Prepares the SOCKS proxy for TOR
 - `initiate_tor()` - Starts the tor.exe process in Windows
 - `kill_tor_process()` - Terminates the tor.exe process in Windows
@@ -15,6 +16,26 @@ import subprocess
 import re
 import requests
 import stem.process
+
+
+def tor_available():
+    """Check if TOR is installed"""
+
+    if os.name == "nt":
+        # Find the path of tor.exe
+        byte_path = subprocess.run(["where", "tor"], stdout=subprocess.PIPE)
+        tor_path = byte_path.stdout.decode("utf-8").strip()
+        # Check if tor.exe is installed
+        if len(tor_path) == 0:
+            print(
+                "The TOR executable could not be found.",
+                "Please, check if tor.exe is installed or added in PATH.",
+            )
+            return False
+        return True
+
+    print("Sorry, Windows 10/11 is needed to route requests through TOR.")
+    return False
 
 
 def get_tor_session():
@@ -40,32 +61,25 @@ def initiate_tor():
     Returns:
         subprocess.Popen: Starts the tor.exe process
     """
-    if os.name == "nt":
-        # Find the path of tor.exe
-        byte_path = subprocess.run(["where", "tor"], stdout=subprocess.PIPE)
-        tor_path = byte_path.stdout.decode("utf-8").strip()
-        # Check if tor.exe is installed
-        if len(tor_path) == 0:
-            print(
-                "The TOR executable could not be found.",
-                "Please, check if tor.exe is installed or added in PATH.",
-            )
-            raise SystemExit
-        # Start TOR process
-        port = 9050
-        tor_process = stem.process.launch_tor_with_config(
-            config={
-                "SocksPort": str(port),
-            },
-            init_msg_handler=lambda line: print(line)
-            if re.search("Bootstrapped", line)
-            else False,
-            tor_cmd=tor_path,
-        )
-        return tor_process
+    if not tor_available():
+        raise SystemExit
 
-    print("Sorry, Windows 10/11 is needed to route requests through TOR.")
-    raise SystemExit
+    # Find the path of tor.exe
+    byte_path = subprocess.run(["where", "tor"], stdout=subprocess.PIPE)
+    tor_path = byte_path.stdout.decode("utf-8").strip()
+
+    # Start TOR process
+    port = 9050
+    tor_process = stem.process.launch_tor_with_config(
+        config={
+            "SocksPort": str(port),
+        },
+        init_msg_handler=lambda line: print(line)
+        if re.search("Bootstrapped", line)
+        else False,
+        tor_cmd=tor_path,
+    )
+    return tor_process
 
 
 def kill_tor_process():
