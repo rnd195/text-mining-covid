@@ -84,8 +84,10 @@ def initiate_tor():
 
 def kill_tor_process():
     """Terminates the tor.exe process"""
-    # Kill the executable ungracefully as tor_process.kill() did not work?
-    killmsg = subprocess.run(
-        ["taskkill", "/im", "tor.exe", "/F"], stdout=subprocess.PIPE
-    )
-    return print(str(killmsg.stdout.decode("utf-8")))
+    if os.name == "nt":
+        # Kill the executable ungracefully as tor_process.kill() did not work?
+        killmsg = subprocess.run(
+            ["taskkill", "/im", "tor.exe", "/F"], stdout=subprocess.PIPE
+        )
+        return print(str(killmsg.stdout.decode("utf-8")))
+    return print("Unable to kill the TOR process.")

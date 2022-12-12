@@ -70,21 +70,30 @@ def soup_object_request_all(link, tor_request_obj=None, skip_consent=False):
         bs4.BeautifulSoup: Parsed HTML document using BeautifulSoup
     """
 
+    # Use one of Archive.org's APIs to ask if the article is available, prefer TOR
     archive_link = "http://archive.org/wayback/available?url=" + link
-    archive_json = requests.get(archive_link, timeout=30).json()
+    if tor_request_obj is not None:
+        archive_json = tor_request_obj.get(archive_link, timeout=30).json()
+    else:
+        archive_json = requests.get(archive_link, timeout=30).json()
     archived = len(archive_json["archived_snapshots"]) != 0
 
-    # Continue if the website is available on archive.org
+    # Continue if the website is available on Archive.org
     if archived and archive_json["archived_snapshots"]["closest"]["available"]:
+        # Use TOR to access Archive.org
+        if tor_request_obj is not None:
+            print("Found a snapshot on Archive.org. Using TOR to request the page.")
+            return soup_object_tor(link, tor_request_obj, skip_consent)
+        # Otherwise, fallback to no TOR
         req = requests.get(archive_json["archived_snapshots"]["closest"]["url"], timeout=30)
-        print("Found a snapshot on Archive.org.")
+        print("Found a snapshot on Archive.org. Accessing directly.")
         return BeautifulSoup(req.text, "html.parser")
 
     # Otherwise try TOR
     if not archived and tor_request_obj is not None:
         print(
             f"URL: {link}",
-            "could not be found on Archive.org, trying TOR."
+            "could not be found on Archive.org, trying TOR to access the page directly."
         )
         return soup_object_tor(link, tor_request_obj, skip_consent)
 
@@ -129,7 +138,7 @@ def generate_article_df(soup_object):
     # Find and append links, dates, time, titles, perex, and premium access
     for item in soup_content.findAll("div", {"class": "art"}):
         link = item.find("a", {"class": "art-link"}, href=True)["href"]
-        article_dict["link"].append(link)
+        article_dict["link"].append(link.replace("https://www.idnes.cz", ""))
 
         date_and_time = pd.to_datetime(
             item.find("span", {"class": "time"})["datetime"]
@@ -195,11 +204,11 @@ def add_content(article_df, tor_requests_obj, sleeping=(5, 10)):
         "topics": []
     }
 
-    for j, url in enumerate(article_df.link):
+    for j, path in enumerate(article_df.link):
         # Provide simple progress bar
         print(
-            f"Processing page {j} / {len(article_df.link)}.",
-            f"Estimated time left: {sleeping[1] * (len(article_df.link) - j)}s"
+            f"Processing page {j + 1} / {len(article_df.link)}.",
+            f"Estimated time left for the current list: {sleeping[1] * (len(article_df.link) - j)}s"
         )
 
         if article_df.premium[j] or article_df.gallery[j] or article_df.video[j]:
@@ -211,7 +220,7 @@ def add_content(article_df, tor_requests_obj, sleeping=(5, 10)):
             continue
 
         # Request and parse
-        soup_page = soup_object_request_all(url, tor_requests_obj)
+        soup_page = soup_object_request_all("https://www.idnes.cz" + path, tor_requests_obj)
 
         if soup_page is None:
             print("Tried Archive.org, TOR, and Google Webcache, found nothing. Skipping.")
@@ -225,12 +234,17 @@ def add_content(article_df, tor_requests_obj, sleeping=(5, 10)):
             perex_full = sentence_cleaner_cz(
                 soup_page.find("div", {"class": "opener"}).text
             )
+            in_article_dict["perex_full"].append(perex_full)
         # Some subpages have a different name for the opening paragraph
         except AttributeError:
-            perex_full = sentence_cleaner_cz(
-                soup_page.find("div", {"class": "excert"}).text
-            )
-        in_article_dict["perex_full"].append(perex_full)
+            # In case an Attribute error persists, produce NA
+            try:
+                perex_full = sentence_cleaner_cz(
+                    soup_page.find("div", {"class": "excert"}).text
+                )
+                in_article_dict["perex_full"].append(perex_full)
+            except AttributeError:
+                in_article_dict["perex_full"].append(pd.NA)
 
         # Content of the article as a Counter object
         content_list = []
@@ -242,20 +256,24 @@ def add_content(article_df, tor_requests_obj, sleeping=(5, 10)):
         for item in div_art_text.findAll("p", attrs={"class": None}):
             content_list.append(sentence_cleaner_cz(item.text))
 
-        # Unnest nested lists -> convert iterable to list -> apply Counter
+        # Unnest nested lists -> convert iterable to list -> apply Counter (50 most common words)
         in_article_dict["word_counter"].append(
-            Counter(list(chain.from_iterable(content_list)))
+            Counter(list(chain.from_iterable(content_list))).most_common(50)
         )
 
-        # Hashed author names
-        authors_div = soup_page.find("div", {"class": "authors"}).find(
-            "span", {"itemprop": "name"}
-        )
-        # For our intents and purposes, we won't store names of the authors
-        # Instead, we store hashes - unique ID for each author
-        in_article_dict["authors_hash"].append(
-            [hash(x) for x in authors_div.text.split(", ")]
-        )
+        try:
+            # Hashed author names
+            authors_div = soup_page.find("div", {"class": "authors"}).find(
+                "span", {"itemprop": "name"}
+            )
+            # For our intents and purposes, we won't store names of the authors
+            # Instead, we store hashes - unique ID for each author
+            in_article_dict["authors_hash"].append(
+                [hash(x) for x in authors_div.text.split(", ")]
+            )
+        # Some articles have no authors
+        except AttributeError:
+            in_article_dict["authors_hash"].append(pd.NA)
 
         # Topics or tags of each article (lowercase)
         tags = []
