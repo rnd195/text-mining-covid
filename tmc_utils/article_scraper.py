@@ -83,34 +83,31 @@ def soup_object_request_all(link, tor_request_obj=None, skip_consent=False):
         # Use TOR to access Archive.org
         if tor_request_obj is not None:
             print("Found a snapshot on Archive.org. Using TOR to request the page.")
-            return soup_object_tor(link, tor_request_obj, skip_consent)
+            return soup_object_tor(
+                archive_json["archived_snapshots"]["closest"]["url"],
+                tor_request_obj,
+                skip_consent
+            )
         # Otherwise, fallback to no TOR
         req = requests.get(archive_json["archived_snapshots"]["closest"]["url"], timeout=30)
         print("Found a snapshot on Archive.org. Accessing directly.")
         return BeautifulSoup(req.text, "html.parser")
 
-    # Otherwise try TOR
+    # Try Google Webcache with no TOR otherwise (TOR gets rate limited)
     if not archived and tor_request_obj is not None:
         print(
             f"URL: {link}",
-            "could not be found on Archive.org, trying TOR to access the page directly."
+            "could not be found on Archive.org. Accessing Google Webcache directly."
         )
-        return soup_object_tor(link, tor_request_obj, skip_consent)
-
-    # And finally try Google Webcache - not yet tested whether this works as intended
-    print(
-        f"URL: {link}",
-        "could not be found on Archive.org and TOR is not avaiable.",
-        "Trying Google Webcache."
-    )
-    req = requests.get(
-        "https://webcache.googleusercontent.com/search?q=cache:" + link,
-        timeout=30
-    )
-    if not req:
-        print("The website hasn't been cached or something else went wrong. Outputting None.")
-        return None
-    return BeautifulSoup(req.text, "html.parser")
+        req = requests.get(
+            "https://webcache.googleusercontent.com/search?q=cache:" + link,
+            timeout=30
+        )
+        # In case of 404, return None
+        if not req:
+            print("The website hasn't been cached or something else went wrong. Outputting None.")
+            return None
+        return BeautifulSoup(req.text, "html.parser")
 
 
 def generate_article_df(soup_object):
@@ -221,13 +218,17 @@ def add_content(article_df, tor_requests_obj, sleeping=(5, 10)):
 
         # Request and parse
         soup_page = soup_object_request_all("https://www.idnes.cz" + path, tor_requests_obj)
-
-        if soup_page is None:
-            print("Tried Archive.org, TOR, and Google Webcache, found nothing. Skipping.")
-            continue
-
         # Give the page some breathing room
         sleep(round(uniform(sleeping[0], sleeping[1]), 3))
+
+        # Save only cached websites in this step (a lot of requests), do not access directly
+        if soup_page is None:
+            print("Tried Archive.org and Google Webcache, found nothing. Skipping.")
+            in_article_dict["perex_full"].append(pd.NA)
+            in_article_dict["word_counter"].append(pd.NA)
+            in_article_dict["authors_hash"].append(pd.NA)
+            in_article_dict["topics"].append(pd.NA)
+            continue
 
         # Full perex
         try:
@@ -252,14 +253,16 @@ def add_content(article_df, tor_requests_obj, sleeping=(5, 10)):
         # Some subpages use a different attribute for content
         if div_art_text is None:
             div_art_text = soup_page.find("div", {"class": "content"})
+        try:
+            for item in div_art_text.findAll("p", attrs={"class": None}):
+                content_list.append(sentence_cleaner_cz(item.text))
 
-        for item in div_art_text.findAll("p", attrs={"class": None}):
-            content_list.append(sentence_cleaner_cz(item.text))
-
-        # Unnest nested lists -> convert iterable to list -> apply Counter (50 most common words)
-        in_article_dict["word_counter"].append(
-            Counter(list(chain.from_iterable(content_list))).most_common(50)
-        )
+            # Unnest nested lists -> convert iterable to list -> apply Counter (50 most common words)
+            in_article_dict["word_counter"].append(
+                Counter(list(chain.from_iterable(content_list))).most_common(50)
+            )
+        except AttributeError:
+            in_article_dict["word_counter"].append(pd.NA)
 
         try:
             # Hashed author names
