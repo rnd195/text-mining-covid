@@ -1,12 +1,12 @@
-link			path to the article (the protocol, sub-domain, and domain is removed to save space)
+link			path to the article (the protocol, sub-domain, and domain are removed to save space)
 date			article publication date
 time			article publication time (some articles have no publication time)
-title			article title
+title			processed article title
 perex_short		a processed list of words that appeared in the short version of the article's opening paragraph
 premium			whether the article is a Premium article (content for these is inaccessible and thus not processed)
 video			whether the article is a just a video (no text to be processed)
 gallery			whether the article is a just a photo gallery (no text to be processed)
 perex_full		a processed list of words that appeared in the full version of the article's opening paragraph
-word_counter	a processed list of tuples containing top 50 words that appeared in the article [("word", frequency), ...]
+word_counter	a processed list of words in tuples containing top 50 words that appeared in the article [("word", frequency), ...]
 authors_hash	a hashed name of the author(s)
 topics			a list of unprocessed tags / topics the article relates to
