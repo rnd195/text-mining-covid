@@ -49,7 +49,7 @@ for i in range(LIST_START, LIST_END):
     # Create article dataframe
     cat_and_artcls = arts.add_content(temp_df, tor_request)
     print(f"\nList number {i} processed. Saving the resulting dataframe.\n")
-    cat_and_artcls.to_csv(f"data/full_df_{i}.csv")
+    cat_and_artcls.to_csv(f"data/full_dfs/full_df_{i}.csv")
     # Sleep so that the user has time to read the message
     sleep(2)
 
