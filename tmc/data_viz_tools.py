@@ -5,10 +5,10 @@ visualization options, both static and interactive.
 
 The module contains the following functions:
 
-- create_all_words_df(df)
-- basic_wordcloud(all_words_df, width=15, height=10)
-- create_hourly_df(df, words_to_delete)
-- hourly_words_barplot(df_hourly_words_long, y_range, width=1000, height=600)
+- create_all_words(df) - Concatenate Counter objects
+- basic_wordcloud(all_words_df, width=15, height=10) - Plot a simple wordcloud
+- create_hourly_df(df, words_to_delete) - Produce a long dataframe of hours / words / counts
+- hourly_words_barplot(df_hourly_words_long, y_range, width=1000, height=600) - Interactive barplot
 """
 from functools import reduce
 import plotly.express as px
@@ -17,16 +17,33 @@ import pandas as pd
 from wordcloud import WordCloud
 
 
-def create_all_words_df(df):
-    """Join all Counter objects into one"""
-    return reduce(lambda a, b: a + b, df.word_counter.dropna())
+def create_all_words(df, words_to_delete):
+    """Join all Counter objects into one and delete specific words
+
+    Args:
+        df (pandas.core.frame.DataFrame): Output of `dynamic_join.py`
+        words_to_delete (list): List of words to delete
+
+    Returns:
+        all_words (collections.Counter): Counter object of most frequent words
+    """
+
+    all_words = reduce(lambda a, b: a + b, df.word_counter.dropna())
+
+    # Delete a defined list of words
+    if len(words_to_delete) > 0:
+        for word in words_to_delete:
+            if word in all_words:
+                del all_words[word]
+
+    return all_words
 
 
 def basic_wordcloud(all_words_df, width=15, height=10):
     """Generate a simple wordcloud using the `wordcloud` and `matplotlib` packages
 
     Args:
-        all_words_df (pandas.core.frame.DataFrame): Output of `create_all_words_df()`
+        all_words_df (pandas.core.frame.DataFrame): Output of `create_all_words()`
         width (int, optional): Figure width, defaults to 15
         height (int, optional): Figure height, defaults to 10
 
@@ -47,7 +64,7 @@ def create_hourly_df(df, words_to_delete):
         words_to_delete (list): List of words to be deleted (e.g. common words)
 
     Returns:
-        df_hourly_words_long (pandas.core.frame.DataFrame): Long dataframe of hours / words / counts.
+        df_hourly_words_long (pandas.core.frame.DataFrame): Long dataframe of hours / words / counts
 
     """
     # Join Counter objects for each hour from 6 to 20
