@@ -12,12 +12,12 @@ A convenient way of installing TOR on your <u>Windows</u> personal computer:
 - [x] Provide an option to not route through TOR
   - [x] `Make anonymous requests through TOR? ([y]es / [n]o): `
   - [x] The alternative is to use the [Archive.org API](https://medium.com/analytics-vidhya/the-wayback-machine-scraper-63238f6abb66) or [Google Webcache](https://stackoverflow.com/q/19010131)
-  - [ ] Consider implementing the `internetarchive` package
+  - [x] Consider implementing the `internetarchive` package
 - [x] Stem titles and perexes
   - [x] Create workflow
   - [x] Apply to all 
-- [ ] Persist cleaned data
-- [ ] Inspect and process individual articles
+- [x] Persist cleaned data
+- [x] Inspect and process individual articles
 - [ ] Create a well-structured README
 
 ## Notes
