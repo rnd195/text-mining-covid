@@ -48,7 +48,7 @@ def basic_wordcloud(all_words_df, width=15, height=10):
         height (int, optional): Figure height, defaults to 10
 
     Returns:
-        A wordcloud plot.
+        A wordcloud plot
     """
     cloud = WordCloud(width=1280, height=720).generate_from_frequencies(all_words_df)
     plt.figure(figsize=[width, height])
@@ -98,11 +98,12 @@ def create_hourly_df(df, words_to_delete):
 
     for i, hour in enumerate(df_hourly.hour):
         for word in enumerate(df_hourly.top_words[i]):
-            list_hourly_words_long.append([hour, word[1], df_hourly.top_freqs[i][word[0]]])
+            list_hourly_words_long.append(
+                [hour, word[1], df_hourly.top_freqs[i][word[0]]]
+            )
 
     df_hourly_words_long = pd.DataFrame(
-        list_hourly_words_long,
-        columns=["hour", "word", "frequency"]
+        list_hourly_words_long, columns=["hour", "word", "frequency"]
     )
 
     return df_hourly_words_long
@@ -118,7 +119,7 @@ def hourly_words_barplot(df_hourly_words_long, y_range: list, width=1000, height
         height (int, optional): Figure height in pixelsm, defaults to 600
 
     Returns:
-        Interactive barchart.
+        Interactive barchart
 
     """
     fig = px.bar(
@@ -128,7 +129,13 @@ def hourly_words_barplot(df_hourly_words_long, y_range: list, width=1000, height
         animation_frame="hour",
         width=width,
         height=height,
-        range_y=y_range
+        range_y=y_range,
+        title="Most frequent words per hour"
+    )
+    fig.update_traces(
+        marker_line_color="rgb(10, 45, 100)",
+        marker_line_width=1.5,
+        opacity=0.65,
     )
     fig["layout"].pop("updatemenus")
     fig.show()

@@ -1,3 +1,4 @@
 .spyproject/
-text-mining-covid/data/partial_dfs/
-text-mining-covid/data/old/
+tmc/data/partial_dfs/
+tmc/data/old/
+add.ipynb

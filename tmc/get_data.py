@@ -36,8 +36,8 @@ print("Actual IP:", requests.get("http://httpbin.org/ip", timeout=30).text)
 
 # %%
 # Persist cleaned pages without accessing idnes.cz directly due to the high number of requests
-LIST_START = 288
-LIST_END = 289
+LIST_START = 289
+LIST_END = 290
 
 for i in range(LIST_START, LIST_END):
     print(f"PAGE LIST NUMBER: {i} / {LIST_END - 1}\n")
