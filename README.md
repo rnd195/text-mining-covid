@@ -7,22 +7,13 @@ A convenient way of installing TOR on your <u>Windows</u> personal computer:
 - Open `cmd.exe` with admin privileges
 - Run `choco install tor -y` 
 
-## TODO
 
-- [x] Provide an option to not route through TOR
-  - [x] `Make anonymous requests through TOR? ([y]es / [n]o): `
-  - [x] The alternative is to use the [Archive.org API](https://medium.com/analytics-vidhya/the-wayback-machine-scraper-63238f6abb66) or [Google Webcache](https://stackoverflow.com/q/19010131)
-  - [x] Consider implementing the `internetarchive` package
-- [x] Stem titles and perexes
-  - [x] Create workflow
-  - [x] Apply to all 
-- [x] Persist cleaned data
-- [x] Inspect and process individual articles
-- [ ] Create a well-structured README
 
-## Notes
+## Flowchart
 
-We have decided to restrict our analysis to span from early 2020 until the end of June 2021 as roughly 80% of all covid-related articles have been written within this period. The second reason is that the articles written on the topic in later months gradually seem to be related to the pandemic less and less.
+![diagram](img/diagram.jpg)
+
+
 
 ## Sources
 
