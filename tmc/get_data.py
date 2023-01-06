@@ -71,6 +71,7 @@ while True:
 
 if CONSENT == "N":
     print("Exiting.")
+    ti.kill_tor_process()
     raise SystemExit
 
 # %%
