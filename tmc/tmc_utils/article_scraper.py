@@ -24,13 +24,13 @@ from tmc_utils.clean_text import sentence_cleaner_cz
 from bs4 import BeautifulSoup
 
 
-def soup_object_tor(link, tor_request_obj=None, skip_consent=False):
+def soup_object_tor(link, tor_request_obj=None, SKIP_CONSENT=False):
     """"Send a request through TOR and parse it using BeautifulSoup
 
     Args:
         link (str): Webpage URL
         tor_request_obj (requests.sessions.Session): TOR requests object
-        skip_consent (bool): Whether or not to skip the prompt to
+        SKIP_CONSENT (bool): Whether or not to skip the prompt to
 
     Returns:
         bs4.BeautifulSoup: Parsed HTML document using BeautifulSoup
@@ -39,13 +39,13 @@ def soup_object_tor(link, tor_request_obj=None, skip_consent=False):
     # Give option to not route through TOR
     if tor_request_obj is None:
         print("TOR requests object hasn't been passed.")
-        if not skip_consent:
-            consent = input("Make requests without TOR? ([y]es / [n]o): ").upper()
-            while consent not in ("Y", "N"):
+        if not SKIP_CONSENT:
+            CONSENT = input("Make requests without TOR? ([y]es / [n]o): ").upper()
+            while CONSENT not in ("Y", "N"):
                 print("Invalid input. Try again.")
-                consent = input("Make requests WITHOUT TOR? ([y]es / [n]o): ").upper()
+                CONSENT = input("Make requests WITHOUT TOR? ([y]es / [n]o): ").upper()
             # If the user still wants to use TOR, exit this script
-            if consent == "N":
+            if CONSENT == "N":
                 print("Pass a TOR requests object.")
                 raise SystemExit
             req = requests.get(link, timeout=30)
@@ -58,13 +58,13 @@ def soup_object_tor(link, tor_request_obj=None, skip_consent=False):
     return BeautifulSoup(req.text, "html.parser")
 
 
-def soup_object_request_all(link, tor_request_obj=None, skip_consent=False):
+def soup_object_request_all(link, tor_request_obj=None, SKIP_CONSENT=False):
     """Request Archive.org before using TOR or Google Webcache and return a BeautifulSoup object
 
     Args:
         link (str): Webpage URL
         tor_request_obj (requests.sessions.Session): TOR requests object
-        skip_consent (bool): Whether or not to skip the prompt to
+        SKIP_CONSENT (bool): Whether or not to skip the prompt to
 
     Returns:
         bs4.BeautifulSoup: Parsed HTML document using BeautifulSoup
@@ -86,7 +86,7 @@ def soup_object_request_all(link, tor_request_obj=None, skip_consent=False):
             return soup_object_tor(
                 archive_json["archived_snapshots"]["closest"]["url"],
                 tor_request_obj,
-                skip_consent
+                SKIP_CONSENT
             )
         # Otherwise, fallback to no TOR
         req = requests.get(archive_json["archived_snapshots"]["closest"]["url"], timeout=30)

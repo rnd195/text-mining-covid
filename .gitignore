@@ -2,3 +2,6 @@
 tmc/data/partial_dfs/
 tmc/data/old/
 add.ipynb
+tmc/helper.py
+tmc/__pycache__
+tmc/tmc_utils/__pycache__
