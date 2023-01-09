@@ -24,10 +24,14 @@ chdir(dirname(abspath(__file__)))
 
 # %%
 # Initialize TOR
-ti.initiate_tor()
-tor_request = ti.get_tor_session()
-print("Tor IP:", tor_request.get("http://httpbin.org/ip", timeout=30).text)
-print("Actual IP:", requests.get("http://httpbin.org/ip", timeout=30).text)
+if ti.tor_available():
+    ti.initiate_tor()
+    tor_request = ti.get_tor_session()
+    print("Tor IP:", tor_request.get("http://httpbin.org/ip", timeout=30).text)
+    print("Actual IP:", requests.get("http://httpbin.org/ip", timeout=30).text)
+else:
+    tor_request = None
+    
 
 # %%
 while True:
@@ -52,9 +56,10 @@ print(
     # 10 seconds for each list, 36 articles in a list, each taking around 15 seconds
     f"""
     {LIST_LENGTH} lists and around {LIST_LENGTH * 36} articles will be processed.
-    This might take at least {(LIST_LENGTH * 10 + LIST_LENGTH * 36 * 15) // 60} minutes, provided that the user doesn't get rate limited.
+    This might take at least {(LIST_LENGTH * 10 + LIST_LENGTH * 36 * 15) // 60} minutes,
+    provided that the user doesn't get rate limited.
     We recommend processing no more than 2 lists at a time.
-    By continuing, you express your familiarity with the software's license.
+    By continuing, you express your familiarity with the terms of service of the accessed website.
     """
 )
 
@@ -102,4 +107,5 @@ for i in range(LIST_START, LIST_END):
     sleep(2)
 
 # %%
-ti.kill_tor_process()
+if ti.tor_available():
+    ti.kill_tor_process()
