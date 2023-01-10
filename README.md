@@ -8,7 +8,9 @@
 
 This project aims to demonstrate a general framework in visualizing trends in the news. It provides a way to *ethically* scrape a list of link from a particular news website through the [Tor network](https://www.torproject.org/), and requesting individual articles using the [Wayback Machine](https://archive.org/web) or Google Webcache. This is done to minimize the amount of traffic on the original website.
 
-In our case, we visualize a month's worth of coronavirus-related articles from idnes.cz, which can be seen in `data_visualization.ipynb`.
+In our case, we visualize a month's worth of coronavirus-related articles from idnes.cz, which can be seen in `data_visualization.ipynb`. It includes both interactive plots generated using [plotly](https://plotly.com/python/) as well as static charts produced by [matplotlib](https://matplotlib.org/). Below is an example of a [Wordcloud](https://github.com/amueller/word_cloud) from a package bearing the same name:
+
+![wordcloud](assets/wordcloud_example.png)
 
 We also provide documentation and tutorials in the `docs/` directory of the project in HTML format generated using [MkDocs](https://www.mkdocs.org/). The source Markdown files used for generating the docs can be found in `assets/docs_md`. *Currently*, we don't intend on hosting the documentation using Github Pages, meaning that it is only accessible offline as Github doesn't render HTML files. Alternatively, to see the documentation, run `mkdocs serve` in the root of the directory after installing all the necessary `mkdocs`-related packages:
 
