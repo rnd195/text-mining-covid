@@ -42,7 +42,7 @@ def get_tor_session():
     """Set up the SOCKS5 proxy for TOR
 
     Returns:
-        requests.sessions.Session: A session object with custom proxies
+        (requests.sessions.Session): A session object with custom proxies
     """
     session = requests.session()
     session.proxies = {
@@ -59,7 +59,7 @@ def initiate_tor():
         SystemExit: Exits on non-Windows systems or when tor.exe isn't found
 
     Returns:
-        subprocess.Popen: Starts the tor.exe process
+        (subprocess.Popen): Starts the tor.exe process
     """
     if not tor_available():
         raise SystemExit

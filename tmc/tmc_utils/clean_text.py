@@ -30,7 +30,7 @@ def sentence_cleaner_cz(text_string: str):
         text_string (str): Text to be pre-processed
 
     Returns:
-        list: List of lowercase words (no numbers, punctuation, or symbols)
+        token_words_lm (list): List of lowercase words (no numbers, punctuation, or symbols)
     """
     # Download tokenizer and define stopwords
     nltk.download("punkt", quiet=True)

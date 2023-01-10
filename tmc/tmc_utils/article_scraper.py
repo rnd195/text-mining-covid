@@ -33,7 +33,7 @@ def soup_object_tor(link, tor_request_obj=None, SKIP_CONSENT=False):
         SKIP_CONSENT (bool): Whether or not to skip the prompt to
 
     Returns:
-        bs4.BeautifulSoup: Parsed HTML document using BeautifulSoup
+        (bs4.BeautifulSoup): Parsed HTML document using BeautifulSoup
     """
 
     # Give option to not route through TOR
@@ -67,7 +67,7 @@ def soup_object_request_all(link, tor_request_obj=None, SKIP_CONSENT=False):
         SKIP_CONSENT (bool): Whether or not to skip the prompt to
 
     Returns:
-        bs4.BeautifulSoup: Parsed HTML document using BeautifulSoup
+        (bs4.BeautifulSoup): Parsed HTML document using BeautifulSoup
     """
 
     # Use one of Archive.org's APIs to ask if the article is available, prefer TOR
@@ -117,7 +117,7 @@ def generate_article_df(soup_object):
         soup_object (bs4.BeautifulSoup): Parsed HTML document using BeautifulSoup
 
     Returns:
-        pandas.core.frame.DataFrame: Dataframe with article properties
+        (pandas.core.frame.DataFrame): Dataframe with article properties
     """
     soup_content = soup_object.find("div", {"id": "list-art-count"})
     # Initialize empty dictionary
@@ -191,7 +191,7 @@ def add_content(article_df, tor_requests_obj, sleeping=(10, 15)):
         sleeping (tuple, optional): Sleep time inbetween requests, defaults to (10, 15)
 
     Returns:
-        pandas.core.frame.DataFrame: Dataframe with article properties and other content
+        (pandas.core.frame.DataFrame): Dataframe with article properties and other content
 
     """
     in_article_dict = {

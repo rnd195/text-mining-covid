@@ -1,0 +1,12 @@
+site_name: Documentation
+
+theme:
+  name: "material"
+
+plugins:
+  - mkdocstrings
+
+nav:
+  - Home: index.md
+  - How-To Guides: how-to-guide.md
+  - Reference: reference.md

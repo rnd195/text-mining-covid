@@ -1,3 +1,14 @@
+## Requirements
+
+1. Open your shell or command prompt in the root folder of the project
+2. Assuming Python 3.10+ is installed, run the following command to install all the packages used in this project
+
+```
+pip install -r requirements.txt
+```
+
+
+
 ## Installing TOR
 
 A convenient way of installing TOR on your <u>Windows</u> personal computer:
@@ -12,6 +23,12 @@ A convenient way of installing TOR on your <u>Windows</u> personal computer:
 ## Flowchart
 
 ![diagram](img/diagram.jpg)
+
+
+
+## Documentation
+
+[Testing index](./site/index.html)
 
 
 
