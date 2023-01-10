@@ -25,7 +25,7 @@ from bs4 import BeautifulSoup
 
 
 def soup_object_tor(link, tor_request_obj=None, SKIP_CONSENT=False):
-    """"Send a request through TOR and parse it using BeautifulSoup
+    """Send a request through TOR and parse it using BeautifulSoup
 
     Args:
         link (str): Webpage URL
