@@ -8,7 +8,7 @@ plugins:
 
 nav:
   - Home: index.md
-  - How-To Guides: how-to-guide.md
+  - How-To Guide: how-to-guide.md
   - Reference: reference.md
   
 docs_dir: assets/docs_md/

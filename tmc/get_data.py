@@ -25,7 +25,12 @@ chdir(dirname(abspath(__file__)))
 # %%
 # Initialize TOR
 if ti.tor_available():
-    ti.initiate_tor()
+    try:
+        ti.initiate_tor()
+    # Reinitiate TOR if it is running in the background
+    except OSError:
+        ti.kill_tor_process()
+        ti.initiate_tor()
     tor_request = ti.get_tor_session()
     print("Tor IP:", tor_request.get("http://httpbin.org/ip", timeout=30).text)
     print("Actual IP:", requests.get("http://httpbin.org/ip", timeout=30).text)
@@ -36,6 +41,7 @@ else:
 # %%
 while True:
     try:
+        print("Refer to the How-To Guide in the docs for more information.")
         LIST_START = int(input("Input list start (e.g. 289): "))
         LIST_END = int(input("Input list end (e.g. 290): "))
     except ValueError:
@@ -56,10 +62,12 @@ print(
     # 10 seconds for each list, 36 articles in a list, each taking around 15 seconds
     f"""
     {LIST_LENGTH} lists and around {LIST_LENGTH * 36} articles will be processed.
-    This might take at least {(LIST_LENGTH * 10 + LIST_LENGTH * 36 * 15) // 60} minutes,
-    provided that the user doesn't get rate limited.
+    Provided that the user doesn't get rate limited, this
+    process might take at least: {(LIST_LENGTH * 10 + LIST_LENGTH * 36 * 15) // 60} minutes.
     We recommend processing no more than 2 lists at a time.
-    By continuing, you express your familiarity with the terms of service of the accessed website.
+    By continuing, you express your familiarity with the terms
+    of service of the accessed website and assume responsibility
+    for any consequences arising from using this script.
     """
 )
 
