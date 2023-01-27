@@ -343,6 +343,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#tmc.data_viz_tools.sankey_diagram" class="md-nav__link">
+    sankey_diagram()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#tmc.data_viz_tools.section_bar" class="md-nav__link">
     section_bar()
   </a>
@@ -651,6 +658,13 @@
           <li class="md-nav__item">
   <a href="#tmc.data_viz_tools.plot_section" class="md-nav__link">
     plot_section()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tmc.data_viz_tools.sankey_diagram" class="md-nav__link">
+    sankey_diagram()
   </a>
   
 </li>
@@ -1717,6 +1731,14 @@ visualization options, both static and interactive.</p>
 <li>basic_wordcloud(all_words_df, width=15, height=10) - Plot a simple wordcloud</li>
 <li>create_hourly_df(df, words_to_delete) - Produce a long dataframe of hours / words / counts</li>
 <li>hourly_words_barplot(df_hourly_words_long, y_range, width=1000, height=600) - Interactive barplot</li>
+<li>hourly_density(article_df) - Density graph of hourly publications</li>
+<li>time_stats(df) - Time statistics about articles</li>
+<li>hourly_bar(df) - Barplot of article counts at a given hour (all time)</li>
+<li>line_plot(df) - Line plot of daily published articles</li>
+<li>section_bar(df) - Dataframe of unique section frequencies</li>
+<li>cases_df(df) - Dataframe of covid cases from covid19api.com</li>
+<li>article_cases_plot(df, cases) - Overlaid line plot of articles and covid cases</li>
+<li>sankey_diagram(df, top_n=25) - Interactive Sankey plot of authors and sections</li>
 </ul>
 
   
@@ -1761,7 +1783,7 @@ visualization options, both static and interactive.</p>
           <td>
                 <code>pandas.<span title="pandas.core">core</span>.<span title="pandas.core.frame">frame</span>.<span title="pandas.core.frame.DataFrame">DataFrame</span></code>
           </td>
-          <td><p>Dataframe of all articles in given time.</p></td>
+          <td><p>Dataframe of articles</p></td>
           <td>
               <em>required</em>
           </td>
@@ -1771,7 +1793,7 @@ visualization options, both static and interactive.</p>
           <td>
                 <code>pandas.<span title="pandas.core">core</span>.<span title="pandas.core.frame">frame</span>.<span title="pandas.core.frame.DataFrame">DataFrame</span></code>
           </td>
-          <td><p>Dataframe of covid cases in given time.</p></td>
+          <td><p>Dataframe of covid cases</p></td>
           <td>
               <em>required</em>
           </td>
@@ -1791,38 +1813,14 @@ visualization options, both static and interactive.</p>
         <tr>
           <td>
           </td>
-          <td><p>Line plot.</p></td>
+          <td><p>Overlaid line plot of articles and covid cases</p></td>
         </tr>
     </tbody>
   </table>
 
       <details class="quote">
         <summary>Source code in <code>tmc\data_viz_tools.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">274</span>
-<span class="normal">275</span>
-<span class="normal">276</span>
-<span class="normal">277</span>
-<span class="normal">278</span>
-<span class="normal">279</span>
-<span class="normal">280</span>
-<span class="normal">281</span>
-<span class="normal">282</span>
-<span class="normal">283</span>
-<span class="normal">284</span>
-<span class="normal">285</span>
-<span class="normal">286</span>
-<span class="normal">287</span>
-<span class="normal">288</span>
-<span class="normal">289</span>
-<span class="normal">290</span>
-<span class="normal">291</span>
-<span class="normal">292</span>
-<span class="normal">293</span>
-<span class="normal">294</span>
-<span class="normal">295</span>
-<span class="normal">296</span>
-<span class="normal">297</span>
-<span class="normal">298</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">298</span>
 <span class="normal">299</span>
 <span class="normal">300</span>
 <span class="normal">301</span>
@@ -1832,39 +1830,51 @@ visualization options, both static and interactive.</p>
 <span class="normal">305</span>
 <span class="normal">306</span>
 <span class="normal">307</span>
-<span class="normal">308</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">article_cases_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">cases</span><span class="p">):</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">article_cases_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">cases</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Function plotting number of articles and number of Covid19 cases into one figure.</span>
 
-<span class="sd">           Args:</span>
-<span class="sd">               df (pandas.core.frame.DataFrame): Dataframe of all articles in given time.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        df (pandas.core.frame.DataFrame): Dataframe of articles</span>
+<span class="sd">        cases (pandas.core.frame.DataFrame): Dataframe of covid cases</span>
 
-<span class="sd">               cases (pandas.core.frame.DataFrame): Dataframe of covid cases in given time.</span>
-
-
-<span class="sd">           Returns:</span>
-<span class="sd">               Line plot.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Overlaid line plot of articles and covid cases</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># preparing data about articles</span>
-    <span class="n">df</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">articles_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
 
     <span class="c1"># Plotting with shared y</span>
-    <span class="n">fig</span><span class="p">,</span> <span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
 
     <span class="c1"># Instantiate a second axes that shares the same x-axis</span>
     <span class="n">ax2</span> <span class="o">=</span> <span class="n">ax1</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
-    <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">articles_df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
-             <span class="n">articles_df</span><span class="p">,</span>
-             <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#69b3a2&quot;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">articles_df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">articles_df</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#69b3a2&quot;</span><span class="p">)</span>
     <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;day&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
-    <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;number of articles&quot;</span><span class="p">,</span>
-                   <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#69b3a2&quot;</span><span class="p">,</span>
-                   <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;number of articles&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#69b3a2&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
 
     <span class="c1"># make a plot with different y-axis using second axis object</span>
     <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">cases</span><span class="o">.</span><span class="n">Date</span><span class="p">,</span> <span class="n">cases</span><span class="o">.</span><span class="n">Cases</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#3399e6&quot;</span><span class="p">)</span>
     <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Covid19 Cases&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#3399e6&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Relation ship between covid articles and covid cases&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Relationship between covid articles and covid cases&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">autofmt_xdate</span><span class="p">()</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
@@ -1950,21 +1960,21 @@ visualization options, both static and interactive.</p>
 
       <details class="quote">
         <summary>Source code in <code>tmc\data_viz_tools.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span>
-<span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">53</span>
 <span class="normal">54</span>
 <span class="normal">55</span>
 <span class="normal">56</span>
 <span class="normal">57</span>
-<span class="normal">58</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">basic_wordcloud</span><span class="p">(</span><span class="n">all_words_df</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">basic_wordcloud</span><span class="p">(</span><span class="n">all_words_df</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a simple wordcloud using the `wordcloud` and `matplotlib` packages</span>
 
 <span class="sd">    Args:</span>
@@ -2016,7 +2026,7 @@ visualization options, both static and interactive.</p>
           <td>
                 <code>pandas.<span title="pandas.core">core</span>.<span title="pandas.core.frame">frame</span>.<span title="pandas.core.frame.DataFrame">DataFrame</span></code>
           </td>
-          <td><p>Dataframe of all articles in given time.</p></td>
+          <td><p>Dataframe of articles</p></td>
           <td>
               <em>required</em>
           </td>
@@ -2028,62 +2038,61 @@ visualization options, both static and interactive.</p>
   <table>
     <thead>
       <tr>
-        <th>Type</th>
+<th>Name</th>        <th>Type</th>
         <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td>
+<td><code>cases</code></td>          <td>
+                <code>pandas.<span title="pandas.core">core</span>.<span title="pandas.core.frame">frame</span>.<span title="pandas.core.frame.DataFrame">DataFrame</span></code>
           </td>
-          <td><p>DataFrame.</p></td>
+          <td><p>Dataframe of covid cases</p></td>
         </tr>
     </tbody>
   </table>
 
       <details class="quote">
         <summary>Source code in <code>tmc\data_viz_tools.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">251</span>
-<span class="normal">252</span>
-<span class="normal">253</span>
-<span class="normal">254</span>
-<span class="normal">255</span>
-<span class="normal">256</span>
-<span class="normal">257</span>
-<span class="normal">258</span>
-<span class="normal">259</span>
-<span class="normal">260</span>
-<span class="normal">261</span>
-<span class="normal">262</span>
-<span class="normal">263</span>
-<span class="normal">264</span>
-<span class="normal">265</span>
-<span class="normal">266</span>
-<span class="normal">267</span>
-<span class="normal">268</span>
-<span class="normal">269</span>
-<span class="normal">270</span>
-<span class="normal">271</span>
-<span class="normal">272</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">cases_df</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">cases_df</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Function importing number of the covid cases in the Czechia for the period associated with</span>
-<span class="sd">                the time window of the Dataframe of all articles in given time.</span>
+<span class="sd">         the time window of the Dataframe of all articles in given time.</span>
 
-<span class="sd">           Args:</span>
-<span class="sd">               df (pandas.core.frame.DataFrame): Dataframe of all articles in given time.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        df (pandas.core.frame.DataFrame): Dataframe of articles</span>
 
-
-<span class="sd">           Returns:</span>
-<span class="sd">               DataFrame.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        cases (pandas.core.frame.DataFrame): Dataframe of covid cases</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Define the time window</span>
-    <span class="n">start</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">min</span><span class="p">())[:</span><span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">min</span><span class="p">()))</span> <span class="o">-</span> <span class="mi">9</span><span class="p">]</span>
-    <span class="n">end</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">max</span><span class="p">())[:</span><span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span> <span class="o">-</span> <span class="mi">9</span><span class="p">]</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">min</span><span class="p">())[:</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">min</span><span class="p">()))</span> <span class="o">-</span> <span class="mi">9</span><span class="p">]</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">max</span><span class="p">())[:</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span> <span class="o">-</span> <span class="mi">9</span><span class="p">]</span>
 
     <span class="c1"># Import Covid cases data as json and the store them as DataFrame.</span>
     <span class="n">link</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://api.covid19api.com/country/czech-republic/status/confirmed?from=</span><span class="si">{</span><span class="n">start</span><span class="si">}</span><span class="s2">T00:00:00Z&amp;to=</span><span class="si">{</span><span class="n">end</span><span class="si">}</span><span class="s2">T00:00:00Z&quot;</span>
     <span class="n">cases</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">link</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
     <span class="n">cases</span><span class="o">.</span><span class="n">Date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">cases</span><span class="o">.</span><span class="n">Date</span><span class="p">)</span>
-    <span class="n">cases</span><span class="o">.</span><span class="n">Date</span> <span class="o">=</span> <span class="n">cases</span><span class="o">.</span><span class="n">Date</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">cases</span><span class="o">.</span><span class="n">Date</span> <span class="o">=</span> <span class="n">cases</span><span class="o">.</span><span class="n">Date</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">cases</span>
 </code></pre></div></td></tr></table></div>
@@ -2160,16 +2169,7 @@ visualization options, both static and interactive.</p>
 
       <details class="quote">
         <summary>Source code in <code>tmc\data_viz_tools.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">31</span>
 <span class="normal">32</span>
 <span class="normal">33</span>
 <span class="normal">34</span>
@@ -2179,7 +2179,16 @@ visualization options, both static and interactive.</p>
 <span class="normal">38</span>
 <span class="normal">39</span>
 <span class="normal">40</span>
-<span class="normal">41</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_all_words</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">words_to_delete</span><span class="p">):</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_all_words</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">words_to_delete</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Join all Counter objects into one and delete specific words</span>
 
 <span class="sd">    Args:</span>
@@ -2273,16 +2282,7 @@ visualization options, both static and interactive.</p>
 
       <details class="quote">
         <summary>Source code in <code>tmc\data_viz_tools.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 61</span>
-<span class="normal"> 62</span>
-<span class="normal"> 63</span>
-<span class="normal"> 64</span>
-<span class="normal"> 65</span>
-<span class="normal"> 66</span>
-<span class="normal"> 67</span>
-<span class="normal"> 68</span>
-<span class="normal"> 69</span>
-<span class="normal"> 70</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 70</span>
 <span class="normal"> 71</span>
 <span class="normal"> 72</span>
 <span class="normal"> 73</span>
@@ -2323,7 +2323,15 @@ visualization options, both static and interactive.</p>
 <span class="normal">108</span>
 <span class="normal">109</span>
 <span class="normal">110</span>
-<span class="normal">111</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_hourly_df</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">words_to_delete</span><span class="p">):</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_hourly_df</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">words_to_delete</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a per-hour dataframe of top 10 words and their counts</span>
 
 <span class="sd">    Args:</span>
@@ -2332,7 +2340,6 @@ visualization options, both static and interactive.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        df_hourly_words_long (pandas.core.frame.DataFrame): Long dataframe of hours / words / counts</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Join Counter objects for each hour from 6 to 20</span>
     <span class="n">list_hourly</span> <span class="o">=</span> <span class="p">[</span>
@@ -2410,7 +2417,7 @@ visualization options, both static and interactive.</p>
           <td>
                 <code>pandas.<span title="pandas.core">core</span>.<span title="pandas.core.frame">frame</span>.<span title="pandas.core.frame.DataFrame">DataFrame</span></code>
           </td>
-          <td><p>Dataframe of all articles in given time.</p></td>
+          <td><p>Dataframe of articles</p></td>
           <td>
               <em>required</em>
           </td>
@@ -2430,40 +2437,38 @@ visualization options, both static and interactive.</p>
         <tr>
           <td>
           </td>
-          <td><p>Bar plot.</p></td>
+          <td><p>Bar plot</p></td>
         </tr>
     </tbody>
   </table>
 
       <details class="quote">
         <summary>Source code in <code>tmc\data_viz_tools.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">192</span>
-<span class="normal">193</span>
-<span class="normal">194</span>
-<span class="normal">195</span>
-<span class="normal">196</span>
-<span class="normal">197</span>
-<span class="normal">198</span>
-<span class="normal">199</span>
-<span class="normal">200</span>
-<span class="normal">201</span>
-<span class="normal">202</span>
-<span class="normal">203</span>
-<span class="normal">204</span>
-<span class="normal">205</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">hourly_bar</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">hourly_bar</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Function plotting hourly published articles.</span>
 
-<span class="sd">           Args:</span>
-<span class="sd">               df (pandas.core.frame.DataFrame): Dataframe of all articles in given time.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        df (pandas.core.frame.DataFrame): Dataframe of articles</span>
 
-
-<span class="sd">           Returns:</span>
-<span class="sd">               Bar plot.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Bar plot</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">df</span><span class="o">.</span><span class="n">time_hour</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Hour&quot;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Number articles&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Articles published at given time&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Articles published at a given time&quot;</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>
@@ -2500,7 +2505,7 @@ visualization options, both static and interactive.</p>
           <td>
                 <code>pandas.<span title="pandas.core">core</span>.<span title="pandas.core.frame">frame</span>.<span title="pandas.core.frame.DataFrame">DataFrame</span></code>
           </td>
-          <td><p>Dataframe of all articles in given time.</p></td>
+          <td><p>Dataframe of articles</p></td>
           <td>
               <em>required</em>
           </td>
@@ -2527,34 +2532,30 @@ visualization options, both static and interactive.</p>
 
       <details class="quote">
         <summary>Source code in <code>tmc\data_viz_tools.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">145</span>
-<span class="normal">146</span>
-<span class="normal">147</span>
-<span class="normal">148</span>
-<span class="normal">149</span>
-<span class="normal">150</span>
-<span class="normal">151</span>
-<span class="normal">152</span>
-<span class="normal">153</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">153</span>
 <span class="normal">154</span>
 <span class="normal">155</span>
 <span class="normal">156</span>
 <span class="normal">157</span>
 <span class="normal">158</span>
 <span class="normal">159</span>
-<span class="normal">160</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">hourly_density</span><span class="p">(</span><span class="n">article_df</span><span class="p">):</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">hourly_density</span><span class="p">(</span><span class="n">article_df</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot a density function of the distribution of articles in daytime.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        article_df (pandas.core.frame.DataFrame): Dataframe of all articles in given time.</span>
-
+<span class="sd">        article_df (pandas.core.frame.DataFrame): Dataframe of articles</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Density function</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">article_df</span><span class="p">[</span><span class="o">~</span><span class="n">article_df</span><span class="p">[</span><span class="s2">&quot;time_hour&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()]</span><span class="o">.</span><span class="n">astype</span><span class="p">({</span><span class="s2">&quot;time_hour&quot;</span> <span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">})</span>
-    <span class="n">df</span><span class="o">.</span><span class="n">time_hour</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;density&#39;</span><span class="p">,</span> <span class="n">ind</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">400</span><span class="p">))</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">article_df</span><span class="p">[</span><span class="o">~</span><span class="n">article_df</span><span class="p">[</span><span class="s2">&quot;time_hour&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()]</span><span class="o">.</span><span class="n">astype</span><span class="p">({</span><span class="s2">&quot;time_hour&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">})</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">time_hour</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;density&quot;</span><span class="p">,</span> <span class="n">ind</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">400</span><span class="p">))</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Hour&quot;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;probability of publishing&quot;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Density of publications&quot;</span><span class="p">)</span>
@@ -2651,15 +2652,7 @@ visualization options, both static and interactive.</p>
 
       <details class="quote">
         <summary>Source code in <code>tmc\data_viz_tools.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">114</span>
-<span class="normal">115</span>
-<span class="normal">116</span>
-<span class="normal">117</span>
-<span class="normal">118</span>
-<span class="normal">119</span>
-<span class="normal">120</span>
-<span class="normal">121</span>
-<span class="normal">122</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">122</span>
 <span class="normal">123</span>
 <span class="normal">124</span>
 <span class="normal">125</span>
@@ -2680,7 +2673,14 @@ visualization options, both static and interactive.</p>
 <span class="normal">140</span>
 <span class="normal">141</span>
 <span class="normal">142</span>
-<span class="normal">143</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">hourly_words_barplot</span><span class="p">(</span><span class="n">df_hourly_words_long</span><span class="p">,</span> <span class="n">y_range</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">600</span><span class="p">):</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">hourly_words_barplot</span><span class="p">(</span><span class="n">df_hourly_words_long</span><span class="p">,</span> <span class="n">y_range</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">600</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate an interactive barchart using `plotly`</span>
 
 <span class="sd">    Args:</span>
@@ -2691,7 +2691,6 @@ visualization options, both static and interactive.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Interactive barchart</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span>
         <span class="n">df_hourly_words_long</span><span class="p">,</span>
@@ -2701,7 +2700,7 @@ visualization options, both static and interactive.</p>
         <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
         <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span>
         <span class="n">range_y</span><span class="o">=</span><span class="n">y_range</span><span class="p">,</span>
-        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Most frequent words per hour&quot;</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Most frequent words per hour&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">update_traces</span><span class="p">(</span>
         <span class="n">marker_line_color</span><span class="o">=</span><span class="s2">&quot;rgb(10, 45, 100)&quot;</span><span class="p">,</span>
@@ -2746,7 +2745,7 @@ visualization options, both static and interactive.</p>
           <td>
                 <code>pandas.<span title="pandas.core">core</span>.<span title="pandas.core.frame">frame</span>.<span title="pandas.core.frame.DataFrame">DataFrame</span></code>
           </td>
-          <td><p>Dataframe of all articles in given time.</p></td>
+          <td><p>Dataframe of articles</p></td>
           <td>
               <em>required</em>
           </td>
@@ -2766,36 +2765,34 @@ visualization options, both static and interactive.</p>
         <tr>
           <td>
           </td>
-          <td><p>Line plot.</p></td>
+          <td><p>Line plot of daily published articles</p></td>
         </tr>
     </tbody>
   </table>
 
       <details class="quote">
         <summary>Source code in <code>tmc\data_viz_tools.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">207</span>
-<span class="normal">208</span>
-<span class="normal">209</span>
-<span class="normal">210</span>
-<span class="normal">211</span>
-<span class="normal">212</span>
-<span class="normal">213</span>
-<span class="normal">214</span>
-<span class="normal">215</span>
-<span class="normal">216</span>
-<span class="normal">217</span>
-<span class="normal">218</span>
-<span class="normal">219</span>
-<span class="normal">220</span>
-<span class="normal">221</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">line_plot</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">line_plot</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Function plotting daily published articles.</span>
 
-<span class="sd">           Args:</span>
-<span class="sd">               df (pandas.core.frame.DataFrame): Dataframe of all articles in given time.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        df (pandas.core.frame.DataFrame): Dataframe of articles</span>
 
-
-<span class="sd">           Returns:</span>
-<span class="sd">               Line plot.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Line plot of daily published articles</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">df</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">date</span><span class="p">)</span>
     <span class="n">df</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
@@ -2838,7 +2835,7 @@ visualization options, both static and interactive.</p>
           <td>
                 <code>pandas.<span title="pandas.core">core</span>.<span title="pandas.core.frame">frame</span>.<span title="pandas.core.frame.DataFrame">DataFrame</span></code>
           </td>
-          <td><p>Dataframe of unique sections frequencies.</p></td>
+          <td><p>Dataframe of unique sections frequencies</p></td>
           <td>
               <em>required</em>
           </td>
@@ -2865,29 +2862,213 @@ visualization options, both static and interactive.</p>
 
       <details class="quote">
         <summary>Source code in <code>tmc\data_viz_tools.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">238</span>
-<span class="normal">239</span>
-<span class="normal">240</span>
-<span class="normal">241</span>
-<span class="normal">242</span>
-<span class="normal">243</span>
-<span class="normal">244</span>
-<span class="normal">245</span>
-<span class="normal">246</span>
-<span class="normal">247</span>
-<span class="normal">248</span>
-<span class="normal">249</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">plot_section</span><span class="p">(</span><span class="n">section_stats</span><span class="p">):</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">plot_section</span><span class="p">(</span><span class="n">section_stats</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Function plotting frequency of the articles classified into particular section.</span>
 
-<span class="sd">           Args:</span>
-<span class="sd">               section_stats (pandas.core.frame.DataFrame): Dataframe of unique sections frequencies.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        section_stats (pandas.core.frame.DataFrame): Dataframe of unique sections frequencies</span>
 
-
-<span class="sd">           Returns:</span>
-<span class="sd">               Bar plot.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Bar plot.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">section_stats</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Number of articles published under given section&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="tmc.data_viz_tools.sankey_diagram" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">sankey_diagram</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">top_n</span><span class="o">=</span><span class="mi">25</span><span class="p">)</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Plot a Sankey diagram of authors and sections contributed to.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>df</code></td>
+          <td>
+                <code>pandas.<span title="pandas.core">core</span>.<span title="pandas.core.frame">frame</span>.<span title="pandas.core.frame.DataFrame">DataFrame</span></code>
+          </td>
+          <td><p>Dataframe of articles</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>top_n</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td><p>Top sections by article count, defaults to 25</p></td>
+          <td>
+                <code>25</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+          </td>
+          <td><p>Interactive Sankey diagram</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>tmc\data_viz_tools.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span>
+<span class="normal">363</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span>
+<span class="normal">374</span>
+<span class="normal">375</span>
+<span class="normal">376</span>
+<span class="normal">377</span>
+<span class="normal">378</span>
+<span class="normal">379</span>
+<span class="normal">380</span>
+<span class="normal">381</span>
+<span class="normal">382</span>
+<span class="normal">383</span>
+<span class="normal">384</span>
+<span class="normal">385</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">sankey_diagram</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">top_n</span><span class="o">=</span><span class="mi">25</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot a Sankey diagram of authors and sections contributed to.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df (pandas.core.frame.DataFrame): Dataframe of articles</span>
+<span class="sd">        top_n (int, optional): Top sections by article count, defaults to 25</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Interactive Sankey diagram</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Author hashes are in a list (multiple authors for a single article)</span>
+    <span class="n">df_authors</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">explode</span><span class="p">(</span><span class="s2">&quot;authors_hash&quot;</span><span class="p">)</span>
+    <span class="n">df_authors</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_authors</span><span class="o">.</span><span class="n">link</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="c1"># Top 25 authors</span>
+    <span class="n">authors_section_counts</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">df_authors</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">&quot;authors_hash&quot;</span><span class="p">,</span> <span class="s2">&quot;section&quot;</span><span class="p">])</span>
+        <span class="o">.</span><span class="n">size</span><span class="p">()</span>
+        <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;link&quot;</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">nlargest</span><span class="p">(</span><span class="n">top_n</span><span class="p">,</span> <span class="s2">&quot;link&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">authors_section_counts</span> <span class="o">=</span> <span class="n">authors_section_counts</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;link&quot;</span><span class="p">:</span> <span class="s2">&quot;count&quot;</span><span class="p">})</span>
+    <span class="c1"># Shorthen hash to the last 5 digits</span>
+    <span class="n">authors_section_counts</span><span class="p">[</span><span class="s2">&quot;author_small&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">authors_section_counts</span><span class="o">.</span><span class="n">authors_hash</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="o">-</span><span class="mi">5</span><span class="p">:]</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Prepare data</span>
+    <span class="n">lbl</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">authors_section_counts</span><span class="p">[</span><span class="s2">&quot;author_small&quot;</span><span class="p">],</span> <span class="n">authors_section_counts</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]]</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+    <span class="n">src</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">factorize</span><span class="p">(</span><span class="n">authors_section_counts</span><span class="p">[</span><span class="s2">&quot;author_small&quot;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">tgt</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">factorize</span><span class="p">(</span><span class="n">authors_section_counts</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span>
+        <span class="n">authors_section_counts</span><span class="p">[</span><span class="s2">&quot;author_small&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">vl</span> <span class="o">=</span> <span class="n">authors_section_counts</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span>
+    <span class="c1"># Produce Sankey diagram</span>
+    <span class="n">snky</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span>
+        <span class="n">go</span><span class="o">.</span><span class="n">Sankey</span><span class="p">(</span>
+            <span class="n">node</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+                <span class="n">pad</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+                <span class="n">thickness</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+                <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.5</span><span class="p">),</span>
+                <span class="n">label</span><span class="o">=</span><span class="n">lbl</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">link</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+                <span class="n">source</span><span class="o">=</span><span class="n">src</span><span class="p">,</span>
+                <span class="n">target</span><span class="o">=</span><span class="n">tgt</span><span class="p">,</span>
+                <span class="n">value</span><span class="o">=</span><span class="n">vl</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">snky</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+        <span class="n">title_text</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Sections contributed to by the top publishing authors&lt;br&gt;&lt;sup&gt;Author names were obscured through hashing&lt;/sup&gt;&quot;</span><span class="p">,</span>
+        <span class="n">font_size</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">snky</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>
@@ -2924,7 +3105,7 @@ visualization options, both static and interactive.</p>
           <td>
                 <code>pandas.<span title="pandas.core">core</span>.<span title="pandas.core.frame">frame</span>.<span title="pandas.core.frame.DataFrame">DataFrame</span></code>
           </td>
-          <td><p>Dataframe of all articles in given time.</p></td>
+          <td><p>Dataframe of articles</p></td>
           <td>
               <em>required</em>
           </td>
@@ -2936,43 +3117,42 @@ visualization options, both static and interactive.</p>
   <table>
     <thead>
       <tr>
-        <th>Type</th>
+<th>Name</th>        <th>Type</th>
         <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td>
+<td><code>sections_df</code></td>          <td>
+                <code>pandas.<span title="pandas.core">core</span>.<span title="pandas.core.frame">frame</span>.<span title="pandas.core.frame.DataFrame">DataFrame</span></code>
           </td>
-          <td><p>DataFrame collecting section stats ready to plot.</p></td>
+          <td><p>Dataframe of unique sections frequencies</p></td>
         </tr>
     </tbody>
   </table>
 
       <details class="quote">
         <summary>Source code in <code>tmc\data_viz_tools.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">223</span>
-<span class="normal">224</span>
-<span class="normal">225</span>
-<span class="normal">226</span>
-<span class="normal">227</span>
-<span class="normal">228</span>
-<span class="normal">229</span>
-<span class="normal">230</span>
-<span class="normal">231</span>
-<span class="normal">232</span>
-<span class="normal">233</span>
-<span class="normal">234</span>
-<span class="normal">235</span>
-<span class="normal">236</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">section_bar</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">section_bar</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Function returning frequency of the articles classified into particular section.</span>
 
-<span class="sd">           Args:</span>
-<span class="sd">               df (pandas.core.frame.DataFrame): Dataframe of all articles in given time.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        df (pandas.core.frame.DataFrame): Dataframe of articles</span>
 
-
-<span class="sd">           Returns:</span>
-<span class="sd">               DataFrame collecting section stats ready to plot.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        sections_df (pandas.core.frame.DataFrame): Dataframe of unique sections frequencies</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">sections</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">link</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
     <span class="n">sections_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sections</span><span class="p">)</span>
@@ -3014,7 +3194,7 @@ visualization options, both static and interactive.</p>
           <td>
                 <code>pandas.<span title="pandas.core">core</span>.<span title="pandas.core.frame">frame</span>.<span title="pandas.core.frame.DataFrame">DataFrame</span></code>
           </td>
-          <td><p>Dataframe of all articles in given time.</p></td>
+          <td><p>Dataframe of articles</p></td>
           <td>
               <em>required</em>
           </td>
@@ -3034,21 +3214,14 @@ visualization options, both static and interactive.</p>
         <tr>
           <td>
           </td>
-          <td><p>time stats about articles.</p></td>
+          <td><p>Time stats about articles</p></td>
         </tr>
     </tbody>
   </table>
 
       <details class="quote">
         <summary>Source code in <code>tmc\data_viz_tools.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">162</span>
-<span class="normal">163</span>
-<span class="normal">164</span>
-<span class="normal">165</span>
-<span class="normal">166</span>
-<span class="normal">167</span>
-<span class="normal">168</span>
-<span class="normal">169</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">169</span>
 <span class="normal">170</span>
 <span class="normal">171</span>
 <span class="normal">172</span>
@@ -3069,30 +3242,69 @@ visualization options, both static and interactive.</p>
 <span class="normal">187</span>
 <span class="normal">188</span>
 <span class="normal">189</span>
-<span class="normal">190</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">time_stats</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">time_stats</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Function performing descriptive statistics about the time when given articles were published.</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            df (pandas.core.frame.DataFrame): Dataframe of all articles in given time.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        df (pandas.core.frame.DataFrame): Dataframe of articles</span>
 
-
-<span class="sd">        Returns:</span>
-<span class="sd">            time stats about articles.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Time stats about articles</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">hour</span><span class="p">,</span> <span class="n">mins</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">time_hour</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span> <span class="n">df</span><span class="o">.</span><span class="n">time_min</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 
     <span class="c1"># Convert time to decimals in order to perform descriptive statistics</span>
     <span class="n">daytime</span> <span class="o">=</span> <span class="n">hour</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;str&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="n">mins</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;str&quot;</span><span class="p">)</span>
-    <span class="n">daytime_serie</span> <span class="o">=</span> <span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">60</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">daytime</span><span class="p">]]</span>
+    <span class="n">daytime_serie</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">daytime</span><span class="p">]</span>
+    <span class="p">]</span>
 
     <span class="c1"># Compute mean and median and Covert them back to time format</span>
-    <span class="n">splitted</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">stat</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">stat</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">daytime_serie</span><span class="p">),</span> <span class="mi">2</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">daytime_serie</span><span class="p">),</span> <span class="mi">2</span><span class="p">)]]</span>
+    <span class="n">splitted</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">stat</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">stat</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">daytime_serie</span><span class="p">),</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">daytime_serie</span><span class="p">),</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="p">]</span>
+    <span class="p">]</span>
 
     <span class="c1"># Data are stored as dictionary</span>
-    <span class="n">stats</span> <span class="o">=</span>  <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="s2">&quot;Mean time of publication&quot;</span><span class="p">,</span> <span class="s2">&quot;Median Time of publication&quot;</span><span class="p">],</span>
-                    <span class="p">[[</span><span class="s2">&quot;:&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="mf">0.6</span><span class="p">))])]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">splitted</span><span class="p">]))</span>
-    <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;Least active daily hour&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">time_hour</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="s2">&quot;00&quot;</span><span class="p">]</span>
-    <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;Most active daily hour&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">time_hour</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="s2">&quot;00&quot;</span><span class="p">]</span>
+    <span class="n">stats</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="nb">zip</span><span class="p">(</span>
+            <span class="p">[</span><span class="s2">&quot;Mean time of publication&quot;</span><span class="p">,</span> <span class="s2">&quot;Median Time of publication&quot;</span><span class="p">],</span>
+            <span class="p">[[</span><span class="s2">&quot;:&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="mf">0.6</span><span class="p">))])]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">splitted</span><span class="p">],</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;Least active daily hour&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">time_hour</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="s2">&quot;00&quot;</span>
+    <span class="p">]</span>
+    <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;Most active daily hour&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">time_hour</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="s2">&quot;00&quot;</span>
+    <span class="p">]</span>
 
     <span class="c1"># Convert data to df and then transpose to obtain better readability</span>
     <span class="n">stats_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">stats</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
