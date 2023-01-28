@@ -7,6 +7,7 @@ The module contains the following functions:
 
 - create_all_words(df) - Concatenate Counter objects
 - basic_wordcloud(all_words_df, width=15, height=10) - Plot a simple wordcloud
+- tree_map(all_words_df, top_n=30) - Plot a treemap of top 30 words
 - create_hourly_df(df, words_to_delete) - Produce a long dataframe of hours / words / counts
 - hourly_words_barplot(df_hourly_words_long, y_range, width=1000, height=600) - Interactive barplot
 - hourly_density(article_df) - Density graph of hourly publications
@@ -65,6 +66,27 @@ def basic_wordcloud(all_words_df, width=15, height=10):
     plt.figure(figsize=[width, height])
     plt.axis("off")
     plt.imshow(cloud)
+
+
+def tree_map(all_words_df, top_n=30):
+    """Generate a simple treemap of top words
+
+    Args:
+        all_words_df (pandas.core.frame.DataFrame): Output of `create_all_words()`
+        top_n (int, optional): Number of top words, defaults to 30
+
+    Returns:
+        A treemap plot
+    """
+    treedf = pd.DataFrame.from_dict(all_words_df, orient="index", columns=["count"])
+    treedf = treedf.reset_index().rename(columns={"index": "word"}).nlargest(50, "count")
+    treefig = px.treemap(
+        treedf,
+        path=["word"],
+        values="count",
+        title=f"Word frequency treemap of top {top_n} words",
+    )
+    treefig.show()
 
 
 def create_hourly_df(df, words_to_delete):
