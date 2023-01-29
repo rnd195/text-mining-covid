@@ -215,8 +215,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#installing-tor" class="md-nav__link">
-    Installing Tor
+  <a href="#installing-tor-on-windows" class="md-nav__link">
+    Installing Tor on Windows
   </a>
   
 </li>
@@ -289,8 +289,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#installing-tor" class="md-nav__link">
-    Installing Tor
+  <a href="#installing-tor-on-windows" class="md-nav__link">
+    Installing Tor on Windows
   </a>
   
 </li>
@@ -314,8 +314,8 @@
 
 <p>The purpose of this guide is to provide a general overview on how to use some of the code in the repository.</p>
 <h2 id="adding-new-data">Adding new data</h2>
-<p>The <code>tmc/</code> folder of this repository contains <code>get_data.py</code>, which is used to obtain data regardless of your operating system (properly tested only on Windows). First, the script tries to initiate a Tor session to route requests through. If, for whatever reason, the process fails, requests will not be routed through Tor. </p>
-<p>The user is then asked to provide the the starting and ending points for the list of articles. Each list contains 36 articles and the minimum start number is 2 while the maximum end number is 455 as of Jan 2023. After the user inputs the start and the end, a summary and a rough approximation of how long the process will take, are printed. For instance, if we input 5 as the start and 7 as the end, the following information is will appear in the console:</p>
+<p>The <code>tmc/</code> folder of this repository contains <code>get_data.py</code>, which is used to obtain data regardless of your operating system (properly tested only on Windows). First, the script tries to initiate a Tor session to route requests through Tor. If, for whatever reason, the process fails, requests will not be routed through the network. </p>
+<p>The user is then asked to provide the starting and ending points for the list of articles. Each list contains 36 articles and the minimum start number is 2 while the maximum end number is 455 as of Jan 2023. After the user inputs the start and the end, a summary and a rough approximation of how long the process will take, are printed. For instance, if we input 5 as the start and 7 as the end, the following information is will appear in the console:</p>
 <pre><code>Input list start (e.g. 289): 5
 Input list end (e.g. 290): 7
 List start: 5 
@@ -331,16 +331,16 @@ List end: 7
 <blockquote>
 <p><em>Note that people usually choose either stemming or lemmatization in text mining analyses. However, while the lemmatization tool that we use works very well, on its own, it doesn't seem to recognize words such as "koronavirus," which is of paramount importance to our analysis. Thus, we unconventionally apply both techniques.</em></p>
 </blockquote>
-<p>After a set of partial dataframes is created, the script then processes each article and appends the text-mined data to the partial dataframes, creating <em>full dfs</em> or <em>full dataframes</em>. We take precautionary actions to avoid saving any potentially copyright-infringing materials, and thus, the content is heavily processed—the dataset does not include any sentences, only single words, oftentimes in their original (e.g., <code>měsíční --&gt; měsíc</code>) or constrained form (e.g., <code>vládnoucí --&gt; vlád</code>). Specifically, only top 50 words are taken into account from the content of the article, and any other parts that include text (except for article tags / topics) are put in alphabetical order to further dissipate any potential meaning. Overall, our intention is to analyze trends only.</p>
+<p>After a set of partial dataframes is created, the script then processes each article and appends the text-mined data to the partial dataframes, creating <em>full dfs</em> or <em>full dataframes</em>. We take precautionary actions to avoid saving any potentially copyright-infringing materials, and thus, the content is heavily processed—the dataset does not include any sentences, only single words, oftentimes with no inflectional changes (e.g., <code>měsíční --&gt; měsíc</code>) or in a constrained form (e.g., <code>vládnoucí --&gt; vlád</code>). Furthermore, only top 50 words are taken into account from the content of the article, and any other parts that include text (except for article tags / topics) are put in alphabetical order to further dissipate any potential meaning. Overall, our intention is to analyze trends only.</p>
 <h3 id="process-flowchart">Process flowchart</h3>
-<p>Below is a detailed flowchart of how the scripts in this repository interact to generate new data. The inputs are: article list link, start number, and end number. The output is a <em>full dataframe</em> as explained above.</p>
+<p>Below is a detailed flowchart of how the scripts in this repository interact to generate new data. The inputs are: <em>article list link</em>, <em>start number</em>, and <em>end number</em>. The output is a <em>full dataframe</em> as explained above.</p>
 <p><img alt="diagram" src="how-to-guide.assets/diagram.jpg" /></p>
-<p>Note the key aspect of this project is to access archived or cached sites in order to minimize the traffic on the original website. We take additional steps in practicing ethical web scraping by, for example, making the time between requests relatively long by default.</p>
-<h2 id="installing-tor">Installing Tor</h2>
+<p>Note that the key aspect of this project is to access archived or cached sites in order to minimize the traffic on the original website. We take additional steps in practicing ethical web scraping by, for example, making the time between requests relatively long by default.</p>
+<h2 id="installing-tor-on-windows">Installing Tor on Windows</h2>
 <p>In this project, it is possible (and preferred) to route your requests through Tor on Windows. A convenient way of installing Tor on your <u>Windows</u> personal computer:</p>
 <ol>
 <li>
-<p>Install Chocolatey Package Manager https://chocolatey.org/install#individual</p>
+<p>Install Chocolatey Package Manager <a href="https://chocolatey.org/install#individual">https://chocolatey.org/install#individual</a></p>
 </li>
 <li>
 <p>Open <code>cmd.exe</code> with admin privileges</p>

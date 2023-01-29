@@ -4,7 +4,7 @@ This is the documentation for the final project for the Data Processing in Pytho
 
 The **How-To Guide** section contains tutorials on how to obtain new data and install Tor.
 
-In the **Reference** section, we provide docstring for all the functions in this repository.
+In the **Reference** section, we provide docstrings for all the functions in this repository.
 
 
 

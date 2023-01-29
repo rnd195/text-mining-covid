@@ -1,5 +1,5 @@
 .spyproject/
-tmc/data/partial_dfs/
+tmc/data/partial_dfs/*.csv
 tmc/data/old/
 add.ipynb
 tmc/helper.py
