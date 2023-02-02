@@ -27,6 +27,10 @@ def csv_to_df(CSV_PATH: str):
     """
     csv_dir = listdir(CSV_PATH)
     csv_files = list(filter(lambda f: f.endswith(".csv"), csv_dir))
+    
+    if len(csv_files) == 0:
+        print("No CSV files found.")
+        return None
 
     # Load first and append the rest
     df = pd.read_csv(CSV_PATH + csv_files[0], index_col=0)
