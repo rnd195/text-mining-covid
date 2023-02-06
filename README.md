@@ -34,16 +34,16 @@ text-mining-covid/
 │  └─ ...
 ├─ tmc/ # Folder for Python scripts and data
 │  │  ├─ tmc_utils/ # Utility scripts and helper functions
-│  │  │  ├─ __init__.py 			# Helper file
-│  │  │  ├─ article_scraper.py 		# Script for scraping articles
-│  │  │  ├─ clean_text.py 			# Text processing script
-│  │  │  └─ tor_initialization.py 	# Route requests through Tor
+│  │  │  ├─ __init__.py            # Helper file
+│  │  │  ├─ article_scraper.py     # Script for scraping articles
+│  │  │  ├─ clean_text.py          # Text processing script
+│  │  │  └─ tor_initialization.py  # Route requests through Tor
 │  │  └─ data/ # Data directory
 │  │     └─ ...
-│  ├─ __init__.py 		# Helper file
+│  ├─ __init__.py       # Helper file
 │  ├─ data_viz_tools.py # Data visualization snippets
-│  ├─ dynamic_join.py 	# CSV file joiner
-│  └─ get_data.py 		# Script for obtaining data
+│  ├─ dynamic_join.py   # CSV file joiner
+│  └─ get_data.py       # Script for obtaining data
 ├─ .gitignore
 ├─ README.md
 ├─ data_visualization.ipynb # Sample analysis
