@@ -6,7 +6,7 @@
 
 ## Introduction
 
-This project aims to demonstrate a general framework in visualizing trends in the news. It provides a way to *ethically* scrape a list of link from a particular news website through the [Tor network](https://www.torproject.org/), and requesting individual articles using the [Wayback Machine](https://archive.org/web) or Google Webcache. This is done to minimize the amount of traffic on the original website.
+This project aims to demonstrate a general framework in visualizing trends in the news. It provides a way to *ethically* scrape a list of links from a particular news website through the [Tor network](https://www.torproject.org/), and requesting individual articles using the [Wayback Machine](https://archive.org/web) or Google Webcache. This is done to minimize the amount of traffic on the original website.
 
 In our case, we visualize a month's worth of coronavirus-related articles from idnes.cz, which can be seen in `data_visualization.ipynb`. It includes both interactive plots generated using [plotly](https://plotly.com/python/) as well as static charts produced by [matplotlib](https://matplotlib.org/). Below is an example of a [Wordcloud](https://github.com/amueller/word_cloud) we generated using the coronavirus-related data:
 
